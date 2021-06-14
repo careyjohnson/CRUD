@@ -48,7 +48,7 @@
 							<td style="text-align:center;"><c:out value="${emp.code}" /></td>
 							<td style="text-align:center;"><c:out value="${emp.name}" /></td>
 							<td style="text-align:center;"><c:out value="${emp.birthday}" /></td>
-							<td style="text-align:center;"><c:out value="${emp.position}" /></td>
+							<td style="text-align:center;"><c:out value="${emp.positionId.name}" /></td>
 							<td style="text-align:center;">
 								<a href="edit?id=<c:out value='${emp.id}' />"><i class="fas fa-user-edit" style="color:black"></i></a>
 									&nbsp;&nbsp;&nbsp;&nbsp; 

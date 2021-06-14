@@ -16,7 +16,7 @@ CREATE TABLE `employee` (
   `birthday` date NOT NULL,
   `address` varchar(100) DEFAULT NULL,
   `gender` varchar(45) NOT NULL DEFAULT '1',
-  `position_id` varchar(45) NOT NULL,
+  `position_id` int NOT NULL,
   `status` varchar(45) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `emp_code_UNIQUE` (`emp_code`),
@@ -35,4 +35,13 @@ INSERT employee (emp_code,name,birthday,address,gender,position_id) values
 ('QL1','Tran Tung Duong','1996-10-23','Nam Dinh','1','3'),
 ('NV1','Vu Khanh Toan','2002-08-17','Ha Noi','1','4');
 
-select * from employee,position where employee.position_id=position.id
+select * from employee;
+select * from position;
+select * from employee,position where employee.position_id=position.id;
+select * from employee where id =1;
+select employee.id,emp_code,employee.name,birthday,address,gender,position.name,employee.status from employee
+inner join position on employee.id=position.id;
+select employee.id,emp_code,employee.name,birthday,address,gender,position.name,employee.status 
+from employee
+inner join position on employee.id=position.id
+where employee.id=1;

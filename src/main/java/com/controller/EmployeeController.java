@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.bean.Employee;
 import com.bean.Position;
 import com.dao.EmployeeModel;
+import com.dao.PositionModel;
 
 
 /**
@@ -58,6 +59,9 @@ public class EmployeeController extends HttpServlet {
 			case "/edit":
 				changeStateEdit(request, response);
 				break;
+			case "/update":
+				updateEmployee(request, response);
+				break;
 			default:
 				listUser(request, response);
 				break;
@@ -76,7 +80,9 @@ public class EmployeeController extends HttpServlet {
 	
 	private void displayForm(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		List<Position> listPos = empDao.getListPosition();
+		//Position pos = new Position();
+		PositionModel posModel = new PositionModel();
+		List<Position> listPos = posModel.getListPosition();
 		request.setAttribute("listPos", listPos);
 		RequestDispatcher dispatcher = request.getRequestDispatcher("user-form.jsp");
 		dispatcher.forward(request, response);
@@ -84,6 +90,7 @@ public class EmployeeController extends HttpServlet {
 
 	private void changeStateAdd(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException {
+		//int id = Integer.parseInt(request.getParameter("id"));
 		String code=request.getParameter("code");
 		String name = request.getParameter("name");
 		String birthdayStr = request.getParameter("birthday");
@@ -97,14 +104,15 @@ public class EmployeeController extends HttpServlet {
 		}
 		String gender = request.getParameter("gender");
 		String address = request.getParameter("address");
-		String position = request.getParameter("position");
-		Employee newEmp = new Employee();
-		newEmp.setCode(code);
-		newEmp.setName(name);
-		newEmp.setBirthday(birthday);
-		newEmp.setGender(gender);
-		newEmp.setAddress(address);
-		newEmp.setPosition(position);
+		int positionId = Integer.parseInt(request.getParameter("positionId"));
+		Employee newEmp = new Employee(0,code, name, birthday,address,gender, new Position(positionId,"",""),null);
+		//newEmp.setId(id);
+//		newEmp.setCode(code);
+//		newEmp.setName(name);
+//		newEmp.setBirthday(birthday);
+//		newEmp.setGender(gender);
+//		newEmp.setAddress(address);
+//		newEmp.setPositionId(new Position(positionId,"",""));
 		empDao.addEmployee(newEmp);
 		response.sendRedirect("list");
 	}
@@ -112,11 +120,34 @@ public class EmployeeController extends HttpServlet {
 	private void changeStateEdit(HttpServletRequest request, HttpServletResponse response)
 			throws SQLException, ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
-		Employee existingEmp = empDao.selectEmployee(id);
+		Employee existingEmp = empDao.getEmployeeById(id);
 		RequestDispatcher dispatcher = request.getRequestDispatcher("user-form.jsp");
-		request.setAttribute("emp", existingEmp);
+		request.setAttribute("e", existingEmp);
 		dispatcher.forward(request, response);
 
+	}
+	
+	private void updateEmployee(HttpServletRequest request, HttpServletResponse response) 
+			throws SQLException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
+		String code=request.getParameter("code");
+		String name = request.getParameter("name");
+		String birthdayStr = request.getParameter("birthday");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+		Date birthday = null;
+		try {
+			birthday = sdf.parse(birthdayStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String gender = request.getParameter("gender");
+		String address = request.getParameter("address");
+		int positionId = Integer.parseInt(request.getParameter("positionId"));
+
+		Employee emp = new Employee(id,code, name, birthday,address,gender, new Position(positionId,"",""),null);
+		empDao.editEmployee(emp);
+		response.sendRedirect("list");
 	}
 	
 	private void handDelete(HttpServletRequest request, HttpServletResponse response) 
@@ -126,6 +157,8 @@ public class EmployeeController extends HttpServlet {
 		response.sendRedirect("list");
 
 	}
+	
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
